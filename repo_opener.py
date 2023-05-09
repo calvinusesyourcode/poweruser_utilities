@@ -1,20 +1,24 @@
-import subprocess
-import inquirer
-
-locations = {"peden-web": "C:\\Users\\calvi\\3D Objects\\peden-v2",
-             "audio-tool": "C:\\Users\\calvi\\3D Objects\\audio_file_categorization_tool"}
+import subprocess, inquirer, os, time
+from pathlib import Path
+from sharing_is_caring import repo_locations, open_with_vscode, projects_location, github_username
 
 questions = [
     inquirer.List(
         "project",
         message="",
-        choices=["peden-web","audio-tool"],
+        choices=list(repo_locations.keys()),
     ),
 ]
 
 answers = inquirer.prompt(questions)
 
-vscode = "C:\\Users\\calvi\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
-folder = locations[answers["project"]]
+folder = Path(projects_location+"/"+repo_locations[answers["project"]])
 
-subprocess.run('"{}" "{}"'.format(vscode,folder), shell=True)
+if os.path.exists(folder):
+    open_with_vscode(folder)
+else:
+    os.chdir(projects_location)
+    repo = "https://github.com/"+github_username+"/"+repo_locations[answers["project"]]
+    subprocess.run('git clone "{}"'.format(repo), shell=True)
+    time.sleep(2)
+    open_with_vscode(folder)
