@@ -3,6 +3,7 @@ from pathlib import Path
 
 vscode_location = "C:\\Users\\calvi\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
 projects_location = "C:\\Users\\calvi\\3D Objects"
+github_username = "calvinusesyourcode"
 
 def open_with_vscode(path):
     vscode = Path(vscode_location)
