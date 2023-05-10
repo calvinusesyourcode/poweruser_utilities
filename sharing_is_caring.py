@@ -15,4 +15,3 @@ with open(Path(os.getcwd()+"/repo_opener_projects.txt"),"r") as f:
         line = line.strip()
         i = line.index(":")
         repo_locations[line[:i]] = line[i+2:]
-    print(repo_locations)
