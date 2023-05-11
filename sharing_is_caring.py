@@ -8,6 +8,7 @@ github_username = "calvinusesyourcode"
 def open_with_vscode(path):
     vscode = Path(vscode_location)
     subprocess.run('"{}" "{}"'.format(vscode, path), shell=True)
+    subprocess.run("exit", shell=True)
 
 with open(Path(os.getcwd()+"/repo_opener_projects.txt"),"r") as f:
     repo_locations = {}
