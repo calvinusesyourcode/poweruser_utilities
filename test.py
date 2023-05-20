@@ -2,7 +2,7 @@ import inspect
 from requests_html import HTMLSession
 
 #define our URL
-url = 'https://www.autohotkey.com/docs/v2/lib/File.htm'
+url = 'https://www.youtube.com/@hubermanlab/videos'
 
 #use the session to get the data
 s = HTMLSession().get(url)
