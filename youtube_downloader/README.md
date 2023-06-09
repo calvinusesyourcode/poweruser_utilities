@@ -1,4 +1,4 @@
-# YouTube Downloader
+# youtube_downloader
 
 Use a keybind to quickly download audio and/or video from youtube.
 
