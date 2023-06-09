@@ -11,7 +11,7 @@ def download_from_youtube(video_url:str, folder:pathlib.WindowsPath="downloads",
     Args:
         *video_url: URL of the video to download.
         folder: Destination folder.
-        mode: Download mode. Can be "video" for video, "audio" for low quality audio. Defaults to "video".
+        mode: Download mode. Can be "video" or "audio". Defaults to "video".
         quality: Quality of the video. Can be "highest", "good" for 1080p, "medium" for 720p, "low" for 480p, "lowest". Defaults to "good".
         okay_with_webm: Defaults to True.
 
@@ -21,9 +21,10 @@ def download_from_youtube(video_url:str, folder:pathlib.WindowsPath="downloads",
 
     if mode == "video":
         
-        video_path = download_from_youtube(video_url, folder, mode="video_only", quality=quality, okay_with_webm=okay_with_webm)
         audio_path = download_from_youtube(video_url, folder, mode="audio", quality=quality, okay_with_webm=okay_with_webm)
-        output_filename = Path(folder, str(video_path.stem)+"_.mp4")
+        video_path = download_from_youtube(video_url, folder, mode="video_only", quality=quality, okay_with_webm=okay_with_webm)
+        print(video_path, audio_path)
+        output_filename = Path(folder, str(audio_path.stem).split("_____")[1]+".mp4")
 
         command = f"ffmpeg -i {video_path} -i {audio_path} -c:v copy -c:a aac {output_filename}"
         subprocess.check_output(command, shell=True)
@@ -49,7 +50,7 @@ def download_from_youtube(video_url:str, folder:pathlib.WindowsPath="downloads",
         }
         selected_stream = next((stream for stream in streams if int(re.findall(r'\d+', stream.resolution)[0]) <= quality_map[quality]), None)
 
-    elif mode == "audio":
+    elif "audio" in mode:
 
         youtube_video = YouTube(video_url, use_oauth=True, allow_oauth_cache=True)
         streams = sorted(youtube_video.streams.filter(only_audio=True, file_extension="mp4"), reverse=True, key=lambda stream: int(''.join(c for c in stream.abr if c.isdigit())) if stream.abr else 0)
@@ -73,7 +74,7 @@ def download_from_youtube(video_url:str, folder:pathlib.WindowsPath="downloads",
     if mode != "video":
         default_filename = selected_stream.default_filename
         without_extension = "".join(default_filename.split(".")[:-1])
-        video_title = "_".join("".join(c.lower() for c in without_extension if c.isalnum() or c == " ").split(" "))
+        video_title = mode+"_____"+"_".join("".join(c.lower() for c in without_extension if c.isalnum() or c == " ").split(" "))
         file_extension = default_filename[-7:].split(".")[-1]
         output_filename = f"{video_title}.{file_extension}"
         
