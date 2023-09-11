@@ -6,12 +6,12 @@ from handle_audio import audio_mp4_to_mp3
 
 def download_from_youtube(video_url:str, folder:pathlib.WindowsPath="downloads", mode:str="video", quality:str="good", okay_with_webm:bool=True):
     """
-    Download video using pytube, returns youtube video title.
+    Download video using pytube, returns file path.
     
     Args:
         *video_url: URL of the video to download.
         folder: Destination folder.
-        mode: Download mode. Can be "video" or "audio". Defaults to "video".
+        mode: Audio or video? Defaults to "video".
         quality: Quality of the video. Can be "highest", "good" for 1080p, "medium" for 720p, "low" for 480p, "lowest". Defaults to "good".
         okay_with_webm: Defaults to True.
 
@@ -22,7 +22,7 @@ def download_from_youtube(video_url:str, folder:pathlib.WindowsPath="downloads",
     if mode == "video":
         
         audio_path = download_from_youtube(video_url, folder, mode="audio", quality=quality, okay_with_webm=okay_with_webm)
-        video_path = download_from_youtube(video_url, folder, mode="video_only", quality=quality, okay_with_webm=okay_with_webm)
+        video_path = download_from_youtube(video_url, folder, mode="video_only", quality=quality, okay_with_webm=False)
         print(video_path, audio_path)
         output_filename = Path(folder, str(audio_path.stem).split("_____")[1]+".mp4")
 

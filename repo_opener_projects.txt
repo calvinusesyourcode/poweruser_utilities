@@ -1,3 +1,7 @@
-utilities: poweruser_utilities
+art: calvin.art
+jimbo: vr-game-123
 peden-web: peden-v2
+whisp: whisper_tool
+utilities: poweruser_utilities
 audio-tool: audio_file_categorization_tool
+test: test
