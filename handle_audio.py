@@ -288,3 +288,49 @@ def audio_to_audio_with_ui():
 
 
 # trim_audio_with_ui()
+
+
+def downsample_all(folder: str, extensions: list, sample_rate: int):
+    from pathlib import Path
+    """Downsample all audio files in a folder and its subfolders."""
+    # Create a new folder with the same name but appended with "_sampled"
+    new_folder = Path(folder).parent / (Path(folder).stem + "_sampled")
+    os.makedirs(new_folder, exist_ok=True)
+
+    # Walk through the folder and its subfolders
+    for dirpath, dirnames, filenames in os.walk(folder):
+        # Create corresponding subfolders in the new folder
+        relative_dirpath = Path(dirpath).relative_to(folder)
+        new_dirpath = new_folder / relative_dirpath
+        os.makedirs(new_dirpath, exist_ok=True)
+
+        # Process each file
+        for filename in filenames:
+            # Check if the file has one of the specified extensions
+            if Path(filename).suffix.lstrip('.') in extensions:
+                input_file = str(Path(dirpath, filename))
+                output_file = str(new_dirpath / filename)
+                downsample_and_move(input_file, output_file, sample_rate)
+
+def downsample_and_move(input_file: str, output_file: str, sample_rate: int):
+    """Downsample an audio file and move it to a specified location."""
+    # Downsample the file
+    command = ['ffmpeg', '-i', input_file, '-ar', str(sample_rate), output_file]
+    subprocess.run(command, check=True)
+
+def downsample_all_with_ui():
+    """Interactively downsample all audio files in a folder and its subfolders."""
+    import inquirer
+
+    questions = [
+        inquirer.Text("folder", message="Enter the folder path"),
+        inquirer.Text("extensions", message="Enter the file extensions, separated by commas"),
+        inquirer.Text("sample_rate", message="Enter the desired sample rate"),
+    ]
+
+    answers = inquirer.prompt(questions)
+    folder = answers["folder"]
+    extensions = [ext.strip() for ext in answers["extensions"].split(',')]
+    sample_rate = int(answers["sample_rate"])
+
+    downsample_all(folder, extensions, sample_rate)

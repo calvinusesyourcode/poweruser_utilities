@@ -1,7 +1,6 @@
 from pytube import YouTube
 from pathlib import Path
 import datetime, math, subprocess, os, torch, openai, pathlib, re, inquirer, time, pyperclip
-from requests_html import HTMLSession
 
 from handle_audio import audio_mp4_to_mp3
 from handle_strings import get_clipboard, show_message
@@ -13,6 +12,7 @@ def find_videos(channel,search_terms):
     
     "lex" or "huberman" for channel"""
     
+    from requests_html import HTMLSession
     url = {'lex': 'https://www.youtube.com/@lexfridman/videos',
             'huberman': 'https://www.youtube.com/@hubermanlab/videos'}[channel]
     
