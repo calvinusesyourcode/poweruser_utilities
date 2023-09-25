@@ -149,8 +149,8 @@ def yt_urls_to_audiopath(urls:list,folder:str="output"):
 
 def download_with_ui():
     url = pyperclip.paste()
-    if "https://" not in url:
-        print("No URL found in clipboard.")
+    if "https://" not in url or "you" not in url or len(url) > 100:
+        print("No YouTube URL found in clipboard.")
         time.sleep(5)
     else:
         questions = [
@@ -175,3 +175,4 @@ def download_with_ui():
         print(download_from_youtube(url, mode=answers["file_type"], quality=answers["quality"]))
 
         subprocess.Popen(f'explorer "{folder}"')
+
