@@ -34,7 +34,7 @@ add_hotkey('shift+ctrl+alt+y', download_with_ui)
 from ableton_demo_creater import wav_to_mp3
 add_hotkey('shift+ctrl+alt+d', wav_to_mp3)
 
-
+# display hotkeys and run main loop
 show_console()
 print("added hotkeys")
 time.sleep(0.250)

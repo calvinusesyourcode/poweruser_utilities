@@ -66,3 +66,24 @@ def estimate_reading_time(text):
 
 # print(get_text_between(epub_to_text("epub/waking_up.epub"), "For Annaka, Emma, and Violet", "Chapter 2"))
 # # print((epub_to_text("epub/waking_up.epub")))
+
+def godlike_copypaste():
+    from pathlib import Path
+    from sharing_is_caring import open_with_vscode
+    directory = Path("C:\\Users\\calvi\\3D Objects\\test")
+    directory.mkdir(parents=True, exist_ok=True)
+
+    i = 0
+    while True:
+        file = directory / f"test{i}.py"
+        if not file.exists():
+            path = Path(str(directory)+"/"+f"test{i}.py")
+            break
+        i += 1
+
+    with open(file, 'w') as f:
+        f.write(pyperclip.paste())
+    time.sleep(.5)
+    open_with_vscode(directory)
+    open_with_vscode(path)
+
