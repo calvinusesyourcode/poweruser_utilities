@@ -151,7 +151,6 @@ def download_with_ui():
     url = pyperclip.paste()
     if "https://" not in url or "you" not in url or len(url) > 100:
         print("No YouTube URL found in clipboard.")
-        time.sleep(5)
     else:
         questions = [
             inquirer.List(
