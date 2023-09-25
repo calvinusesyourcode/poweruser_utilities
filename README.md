@@ -11,6 +11,7 @@ ctrl + x
 cmd + r
 "shell:startup"
 Enter
+ctrl + v
 ```
 
 Now you have access to hotkeys. Run script to see what is available.
