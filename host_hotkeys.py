@@ -13,7 +13,7 @@ def run(app: typing.Callable):
 
 def hide(seconds: int):
     for i in range(seconds, 0, -1):
-        print(f"    > closing in {i}", end='\r')
+        print(f"  > closing in {i}", end='\r')
         time.sleep(1)
     hide_console()
 
