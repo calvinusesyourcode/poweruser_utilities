@@ -156,7 +156,7 @@ def download_with_ui():
             inquirer.List(
                 "file_type",
                 message="",
-                choices=["video","audio","video_only",]
+                choices=["video","audio","video_only"]
             ),
             inquirer.List(
                 "quality",

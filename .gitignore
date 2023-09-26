@@ -5,3 +5,4 @@
 secrets.json
 secret.py
 downloads
+__pycache__

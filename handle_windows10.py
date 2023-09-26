@@ -1,4 +1,4 @@
-import ctypes
+import ctypes, time
 
 def hide_console():
     hWnd = ctypes.windll.kernel32.GetConsoleWindow()
@@ -10,6 +10,8 @@ def show_console():
     if hWnd:
         set_console_size(400, 300)
         ctypes.windll.user32.ShowWindow(hWnd, 1)
+        time.sleep(0.100)
+        ctypes.windll.user32.SetForegroundWindow(hWnd)
 
 def set_console_size(width, height):
     hWnd = ctypes.windll.kernel32.GetConsoleWindow()

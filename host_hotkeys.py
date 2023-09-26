@@ -25,6 +25,12 @@ def add_hotkey(hotkey: str, app: typing.Callable):
 from handle_youtube import download_with_ui
 add_hotkey('shift+ctrl+alt+y', download_with_ui)
 
+from handle_strings import godlike_copypaste, submit_to_sheets
+from handle_twitter import tweet
+add_hotkey('shift+ctrl+alt+b', godlike_copypaste)
+add_hotkey('shift+ctrl+alt+a', submit_to_sheets)
+add_hotkey('shift+ctrl+alt+s', tweet)
+
 
 # from handle_audio import to_mp3_with_ui, audio_to_audio_with_ui, trim_audio_with_ui
 # keyboard.add_hotkey('shift+ctrl+alt+t', lambda: run())
@@ -39,9 +45,10 @@ show_console()
 print("added hotkeys")
 time.sleep(0.250)
 print("\n")
-for key in hotkeys:
-    print("    ", key, hotkeys[key])
-    time.sleep(0.200)
+
+sorted_hotkeys = {k: hotkeys[k] for k in sorted(hotkeys)}
+for key in sorted_hotkeys:
+    print("    ", key, sorted_hotkeys[key])
 print("\n")
-hide(3)
+hide(1)
 keyboard.wait()

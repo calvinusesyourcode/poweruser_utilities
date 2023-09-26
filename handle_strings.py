@@ -87,3 +87,16 @@ def godlike_copypaste():
     open_with_vscode(directory)
     open_with_vscode(path)
 
+def submit_to_sheets():
+    body = {}
+    i = 0
+    while True:
+        user_input = input("> ")
+        if user_input == "":
+            break
+        else:
+            body[i] = user_input
+            i += 1
+    for key in body:
+        print("   ", key, body[key])
+    time.sleep(2)
