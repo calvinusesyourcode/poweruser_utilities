@@ -76,6 +76,7 @@ def send_tweet(text: str):
 
 def tweet():
     text = ""
+    print("tweet")
     while True:
         user_input = input("> ")
         if user_input == "":
