@@ -2,9 +2,11 @@ import yaml, argparse, os
 
 def main(mode):
 
+
     if mode is None:
         raise ValueError("mode must be startup or shutdown or fauxshutdown")
         
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     with open("config.yaml") as f:
         config = yaml.safe_load(f)
 
