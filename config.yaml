@@ -1,0 +1,10 @@
+repo_folder: C:\\Users\\calvi\\3D Objects
+
+shutdown:
+  repos_to_push:
+  - _notes
+  
+startup:
+  repos_to_pull:
+  - poweruser_utilities
+  - _notes

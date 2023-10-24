@@ -2,6 +2,8 @@
 *.mp4
 *.asd
 *.wav
+*.csv
+csv
 secrets.json
 secret.py
 downloads

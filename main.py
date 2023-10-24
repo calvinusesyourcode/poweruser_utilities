@@ -32,8 +32,8 @@ def afk_monitor():
     global afk
     ms = interval * 1000
     while True:
-        if time_since_input() > ms:
-            if not afk:
+        if not afk:
+            if time_since_input() > ms:
                 show_console()
                 print("\n")
                 afk = True
@@ -60,17 +60,20 @@ def show_hotkeys():
     hide(3)
 
 def punch_and_start_afk_monitoring():
-    global time_tracking
+    global time_tracking, afk
     if not time_tracking:
         threading.Thread(target=afk_monitor, daemon=True).start()
         time_tracking = True
+    afk = False
     punch()
 
 # add hotkeys
 add_hotkey('shift+ctrl+alt+k', show_hotkeys)
 
-from handle_time import punch
+from handle_time import punch, show_last_n_lines
 add_hotkey('shift+ctrl+alt+a', punch_and_start_afk_monitoring)
+add_hotkey('shift+ctrl+alt+w', show_last_n_lines)
+
 
 from handle_youtube import download_with_ui
 add_hotkey('shift+ctrl+alt+y', download_with_ui)
