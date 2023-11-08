@@ -1,4 +1,4 @@
-import os, openai, subprocess, pathlib, math, datetime, json, inquirer, time
+import os, openai, subprocess, pathlib, math, datetime, json, inquirer, time, whisper
 from pathlib import Path
 # my imports
 from handle_strings import to_time
@@ -24,6 +24,10 @@ def downformat_audio(folder,filename):
     subprocess.run(command, check=True)
     return Path(output_file)
 
+def transcribe(filepath):
+    return whisper.load_model("tiny").transcribe(filepath)["text"]
+
+print(transcribe("whisper.m4a"))
 
 def split_audio_file(folder,filename):
     """Split an audio file into 24MB chunks, especially for use with Whisper API."""
@@ -284,11 +288,6 @@ def audio_to_audio_with_ui():
     audio_to_audio(folder, answers["file"], answers["target_format"], target_sample_rate)
 
     subprocess.Popen(f'explorer "{folder}"')
-
-
-
-# trim_audio_with_ui()
-
 
 def downsample_all(folder: str, extensions: list, sample_rate: int):
     from pathlib import Path
