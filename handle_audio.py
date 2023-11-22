@@ -27,8 +27,6 @@ def downformat_audio(folder,filename):
 def transcribe(filepath):
     return whisper.load_model("tiny").transcribe(filepath)["text"]
 
-print(transcribe("whisper.m4a"))
-
 def split_audio_file(folder,filename):
     """Split an audio file into 24MB chunks, especially for use with Whisper API."""
     files = []
@@ -333,3 +331,21 @@ def downsample_all_with_ui():
     sample_rate = int(answers["sample_rate"])
 
     downsample_all(folder, extensions, sample_rate)
+
+def whisper_test(file_path):
+    from openai import OpenAI
+    client = OpenAI()
+
+    audio_file= open(file_path, "rb")
+    transcript = client.audio.transcriptions.create(
+    model="whisper-1", 
+    file=audio_file,
+    response_format="verbose_json",
+    )
+    # for each attribute of transcript, save the key and value to file
+    # save transcript to txt file
+    with open("transcript.txt", "w") as f:
+        f.write(json.dumps(transcript.text, indent=4))
+
+# whisper_test("C:/Users/calvi/3D Objects/poweruser_utilities/downloads/audio_____alcohol_is_worse_than_you_think__andrew_huberman.mp3")
+# whisper_test("C:/Users/calvi/3D Objects/poweruser_utilities/downloads/audio_____somebody_ring_the_dinkster.mp4")

@@ -70,8 +70,11 @@ def punch_and_start_afk_monitoring():
 # add hotkeys
 add_hotkey('shift+ctrl+alt+k', show_hotkeys)
 
-from handle_clipboard import perform_ocr_on_clipboard
+from handle_clipboard import perform_ocr_on_clipboard, fix_windows_file_path_on_clipboard, type_clipboard_contents
 add_hotkey('shift+ctrl+alt+l', perform_ocr_on_clipboard)
+add_hotkey('shift+ctrl+alt+[', fix_windows_file_path_on_clipboard)
+add_hotkey('shift+ctrl+alt+v', type_clipboard_contents)
+
 
 from handle_time import punch, show_last_n_lines
 add_hotkey('shift+ctrl+alt+a', punch_and_start_afk_monitoring)
