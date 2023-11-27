@@ -12,10 +12,13 @@ time_tracking = False
 afk = False
 
 # functions
-def run(app: typing.Callable):
-    show_console()
-    app()
-    hide(3)
+def run(app: typing.Callable, console: bool = True):
+    show_console() if console else None
+    try:
+        app()
+    except Exception as e:
+        print(e)
+    hide(3) if console else None
 
 def hide(seconds: int):
     print("\n")
@@ -24,8 +27,8 @@ def hide(seconds: int):
         time.sleep(1)
     hide_console()
 
-def add_hotkey(hotkey: str, app: typing.Callable):
-    keyboard.add_hotkey(hotkey, lambda: run(app))
+def add_hotkey(hotkey: str, app: typing.Callable, console: bool = True):
+    keyboard.add_hotkey(hotkey, lambda: run(app) if console else run(app, console=False))
     hotkeys[hotkey.split("+")[-1]] = str(app.__name__)
 
 def afk_monitor():
@@ -70,10 +73,13 @@ def punch_and_start_afk_monitoring():
 # add hotkeys
 add_hotkey('shift+ctrl+alt+k', show_hotkeys)
 
+from handle_assistant import ffmpeg_assist
+add_hotkey('shift+ctrl+alt+f', ffmpeg_assist)
+
 from handle_clipboard import perform_ocr_on_clipboard, fix_windows_file_path_on_clipboard, type_clipboard_contents
 add_hotkey('shift+ctrl+alt+l', perform_ocr_on_clipboard)
 add_hotkey('shift+ctrl+alt+[', fix_windows_file_path_on_clipboard)
-add_hotkey('shift+ctrl+alt+v', type_clipboard_contents)
+add_hotkey('shift+ctrl+alt+v', type_clipboard_contents, console=False)
 
 
 from handle_time import punch, show_last_n_lines
@@ -81,8 +87,10 @@ add_hotkey('shift+ctrl+alt+a', punch_and_start_afk_monitoring)
 add_hotkey('shift+ctrl+alt+w', show_last_n_lines)
 
 
-from handle_youtube import download_with_ui
+from handle_youtube import download_with_ui, download_transcript_with_ui
 add_hotkey('shift+ctrl+alt+y', download_with_ui)
+add_hotkey('shift+ctrl+alt+t', download_transcript_with_ui)
+# use a new hotkey to execute `download_transcript`
 
 from handle_strings import godlike_copypaste, submit_to_sheets
 from handle_twitter import tweet

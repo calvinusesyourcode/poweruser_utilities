@@ -72,6 +72,7 @@ def download_from_youtube(video_url:str, folder:pathlib.WindowsPath="downloads",
     Returns:
         str: A formatted title of the downloaded YouTube video.
     """
+    print(f"Downloading from YouTube... {video_url}")
 
     if mode == "video":
         
@@ -84,6 +85,8 @@ def download_from_youtube(video_url:str, folder:pathlib.WindowsPath="downloads",
         subprocess.check_output(command, shell=True)
         os.remove(video_path)
         os.remove(audio_path)
+        print(output_filename)
+        return output_filename
 
 
     elif mode == "video_only":
@@ -136,9 +139,98 @@ def download_from_youtube(video_url:str, folder:pathlib.WindowsPath="downloads",
 
         if mode == "audio":
             # return Path(folder, output_filename)
-            return audio_mp4_to_mp3(folder, output_filename)
+            path = Path(audio_mp4_to_mp3(folder, output_filename))
+            return path
         else:
             return Path(folder, output_filename)
+
+import os
+import subprocess
+import inquirer
+from typing import List, Tuple
+
+def download_video_and_transcript(video_url: str, folder: pathlib.WindowsPath = "downloads"):
+    """
+    Download video and its transcript using pytube, returns youtube video title and transcript.
+    
+    Args:
+        video_url: URL of the video to download.
+        folder: Destination folder.
+
+    Returns:
+        Tuple: A tuple containing the title of the downloaded YouTube video and its transcript.
+    """
+    video_id = extract_video_id_from_url(video_url)
+    try:
+        global transcript
+        transcript = get_transcript(video_id)
+    except Exception as e:
+        print(e, "No transcript found")
+    if transcript:
+        print("\n~".join([f"{start_time}s: {text}" for start_time, text in transcript[:10]]) + "...")
+    video_path = download_from_youtube(video_url, folder, mode="video", quality="good", okay_with_webm=True)
+    if transcript:
+        import re
+        transcript_folder = os.path.join(folder, "transcripts")
+        os.makedirs(transcript_folder, exist_ok=True)
+        video_title = re.search(r'\\([^\\]*?)\.', str(video_path)).group(1)
+        with open(os.path.join(transcript_folder, f"{video_title}.txt"), "w") as f:
+            for start_time, text in transcript:
+                f.write(f"{start_time}s: {text}\n")
+
+    return video_path, transcript
+
+def select_transcript_lines(transcript: List) -> List[Tuple[float, float]]:
+    """
+    Prompt the user to multiple choice select which lines of the transcript.
+
+    Args:
+        transcript: The transcript of the video.
+
+    Returns:
+        List[Tuple[float, float]]: A list of tuples where each tuple represents the start and end time of a selected line.
+    """
+    lines = [f"{i}, {start_time}s: {text}" for i, [start_time, text] in enumerate(transcript)]
+    choices = [inquirer.Checkbox("lines", message="Select lines", choices=lines)]
+    selected_lines =  inquirer.prompt(choices)["lines"]
+    
+    selected_times = {}
+    last_i = 0
+    block = 0
+    for i in [int(line[0]) for line in selected_lines]:
+        time, text = transcript[i]
+        if i-1 == last_i:
+            block_time = transcript[block][0]
+            duration = transcript[i+1][0]-block_time-0.05
+            text = transcript[block][1] + " " + text
+        else:
+            block_time = time
+            duration = transcript[i+1][0]-time-0.05
+            block = i
+        selected_times[block_time] = [duration, text]
+        last_i = i
+
+    return selected_times
+
+def video_to_clips(video_path: str, io_points, output_folder: str):
+    """
+    Use ffmpeg to cut out slices from the downloaded video.
+
+    Args:
+        video_path: The path of the video file.
+        io_points: A list of tuples where each tuple represents the start and end time of a slice.
+        output_folder: The folder to save the output clips.
+    """
+    print("video_to_clips", video_path, io_points, output_folder, sep=";;")
+    os.makedirs(output_folder, exist_ok=True)
+    
+    for i, (start, (duration, _)) in enumerate(io_points.items()):
+        print(start, duration)
+        output_file = os.path.join(output_folder, f"clip_{i}.mp4")
+        command = f'ffmpeg -i "{video_path}" -ss {start} -to {start+duration} "{output_file}"'
+        print(command)
+
+        subprocess.check_output(command, shell=True)
 
 def yt_urls_to_audiopath(urls:list,folder:str="output"):
     audiopaths = []
@@ -175,3 +267,66 @@ def download_with_ui():
 
         subprocess.Popen(f'explorer "{folder}"')
 
+import re
+import pyperclip
+from youtube_transcript_api import YouTubeTranscriptApi
+
+def extract_video_id_from_url(url):
+    match = re.search(r"watch\?v=([a-zA-Z0-9_-]+)", url)
+    return match.group(1) if match else None
+
+def get_transcript(video_id):
+    try:
+        transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+        transcript = []
+        for item in transcript_list:
+            start_time = item['start']
+            text = item['text']
+            try:
+                transcript.append([start_time, text])
+            except:
+                print("Failed to add to transcript")
+        if "Could not retrieve a transcript for the video" in "".join([text for _, b in transcript[:6]]):
+            raise Exception("Could not retrieve a transcript for the video")
+        return transcript
+    except Exception as e:
+        raise e
+
+def download_transcript_with_ui():
+    clipboard_content = pyperclip.paste()
+    video_id = extract_video_id_from_url(clipboard_content)
+
+    if not video_id:
+        video_id = extract_video_id_from_url(input("Enter YouTube video ID: "))
+
+    transcript = get_transcript(video_id)
+    print(transcript)
+    return transcript
+
+def test():
+    folder = "downloads"
+    video_url = pyperclip.paste()
+    if not video_url:
+        video_url = input("Enter YouTube URL: ")
+
+    # Download video and transcript
+    video_path, transcript = download_video_and_transcript(video_url, folder)
+
+    # Select lines from transcript
+    selected_times = select_transcript_lines(transcript)
+
+    # Cut out slices from video
+    print(video_path)
+    output_folder = os.path.join(folder, "clips")
+    print(video_path, selected_times, output_folder)
+
+    video_to_clips(video_path, selected_times, output_folder)
+
+
+def test2():
+    _, video_path, selected_times, output_folder = """video_to_clips;;downloads\youre_afraid_of_the_effort_david_goggins.mp4;;s;;downloads\clips""".split(";;")
+    selected_times = {0.42: [4.14, "I hear it all the time but he doesn't want to end up like him"]}
+    video_to_clips(video_path, selected_times, output_folder)
+    
+
+# test()

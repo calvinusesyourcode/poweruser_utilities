@@ -73,7 +73,7 @@ def audio_mp4_to_mp3(folder, filename: str):
         mp4_size = os.path.getsize(mp4)
         if abs(mp3_size - mp4_size) < 0.1 * mp4_size:
             os.remove(mp4)
-            return Path(mp3)
+        return Path(mp3)
 
 def trim_audio(folder, filename, start_time:str="00:00:00", end_time:str="end"):
     """Trim an audio file."""

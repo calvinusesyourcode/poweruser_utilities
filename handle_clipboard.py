@@ -16,6 +16,7 @@ def fix_windows_file_path_on_clipboard():
     if os.name == 'nt':
         import winsound
         winsound.Beep(500, 100)
+    return fixed_path
 
 def type_clipboard_contents():
-    keyboard.write(pyperclip.paste(), delay=0.050)
+    keyboard.write(pyperclip.paste(), delay=0.005)
