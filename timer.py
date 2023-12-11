@@ -4,7 +4,9 @@ import time
 def countdown(time_seconds, label):
     while time_seconds > -1:
         mins, secs = divmod(time_seconds, 60)
+        print(mins, secs)
         hours, mins = divmod(mins, 60)
+        print(hours, mins, secs)
         if hours >= 1:
             timer = ' {} — {:02d}:{:02d}:{:02d} '.format(task_name, hours, mins, secs)
         else:
@@ -14,24 +16,20 @@ def countdown(time_seconds, label):
         time.sleep(1)
         time_seconds -= 1
 
-# Get User Inputs
-# task_name = "test"
-# timer_minutes = 1
-task_name = input("Enter the task name: ")
-timer_minutes = int(input("Enter the timer in minutes: "))
+# task_name = input("Enter the task name: ")
+timer_minutes = int(float(input("Enter the time in hours: ")) * 60)
+task_name = "deep work"
 color = "black"
 
-# Create Main Window
 root = tk.Tk()
 root.title("Task Timer")
-root.overrideredirect(True) # Makes the window borderless
+root.overrideredirect(True)
 root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
-root.attributes('-alpha', 1.0) # Makes the window completely transparent
-# make the background blue
+root.attributes('-alpha', 1.0)
 root.configure(background='blue')
-root.wm_attributes("-transparentcolor", "blue") # Makes the black background transparent
-root.attributes("-topmost", True) # Makes the window stay on top of all other windows
-# Create 4 Thin Rectangles for Border
+root.wm_attributes("-transparentcolor", "blue")
+root.attributes("-topmost", True)
+
 thickness = 5
 rects = [
     tk.Frame(root, bg=color, height=thickness),
@@ -39,14 +37,11 @@ rects = [
     tk.Frame(root, bg=color, width=thickness),
     tk.Frame(root, bg=color, width=thickness)
 ]
-rects[0].pack(side='top', fill='both')
-rects[1].pack(side='bottom', fill='both')
-rects[2].pack(side='left', fill='both')
-rects[3].pack(side='right', fill='both')
+for rect in rects:
+    rect.pack(side=rects.index(rect) % 2 and 'left' or 'top', fill='both')
 
-# Display Task Name and Timer on the Same Line with 50% Smaller Font
 label_time = tk.Label(root, text="", font=("Consolas", 12), bg=color, fg="white")
-label_time.place(x=root.winfo_screenwidth() / 2, y=0, anchor='n')
+label_time.place(x=root.winfo_screenwidth() / 2, y=root.winfo_screenheight()*0.97, anchor='n')
 countdown(timer_minutes * 60, label_time)
 
 root.mainloop()

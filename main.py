@@ -2,9 +2,9 @@ import keyboard, time, os, typing, threading
 from datetime import datetime, timedelta
 from handle_system import show_console, hide_console, time_since_input, wipe
 
-hide_console()
 
 # variables
+print(" > loading vars")
 f3d = "C:/Users/calvi/3D Objects"
 interval = 120
 hotkeys = {}
@@ -12,10 +12,14 @@ time_tracking = False
 afk = False
 
 # functions
+print(" > defining functions")
 def run(app: typing.Callable, console: bool = True):
     show_console() if console else None
     try:
         app()
+        if os.name == 'nt':
+            import winsound
+            winsound.Beep(500, 200)
     except Exception as e:
         print(e)
     hide(3) if console else None
@@ -71,6 +75,7 @@ def punch_and_start_afk_monitoring():
     punch()
 
 # add hotkeys
+print(" > adding hotkeys")
 add_hotkey('shift+ctrl+alt+k', show_hotkeys)
 
 from handle_assistant import ffmpeg_assist
@@ -97,9 +102,6 @@ from handle_twitter import tweet
 add_hotkey('shift+ctrl+alt+b', godlike_copypaste)
 add_hotkey('shift+ctrl+alt+s', tweet)
 
-
-
-
 # from handle_audio import to_mp3_with_ui, audio_to_audio_with_ui, trim_audio_with_ui
 # keyboard.add_hotkey('shift+ctrl+alt+t', lambda: run())
 # keyboard.add_hotkey('shift+ctrl+alt+u', lambda: run())
@@ -113,3 +115,4 @@ show_hotkeys()
 
 # run loop
 keyboard.wait()
+

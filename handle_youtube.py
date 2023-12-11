@@ -327,6 +327,4 @@ def test2():
     _, video_path, selected_times, output_folder = """video_to_clips;;downloads\youre_afraid_of_the_effort_david_goggins.mp4;;s;;downloads\clips""".split(";;")
     selected_times = {0.42: [4.14, "I hear it all the time but he doesn't want to end up like him"]}
     video_to_clips(video_path, selected_times, output_folder)
-    
 
-# test()
