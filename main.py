@@ -1,28 +1,40 @@
-import keyboard, time, os, typing, threading
+import keyboard, time, os, typing, threading, subprocess, sys
 from datetime import datetime, timedelta
 from handle_system import show_console, hide_console, time_since_input, wipe
 
 
-# variables
-print(" > loading vars")
+print(" > vars")
 f3d = "C:/Users/calvi/3D Objects"
 interval = 120
 hotkeys = {}
 time_tracking = False
 afk = False
+app_running = False
 
-# functions
-print(" > defining functions")
-def run(app: typing.Callable, console: bool = True):
+print(" > functions")
+def run(app: typing.Callable, console: bool):
+    global app_running
+    if app_running:
+        cmd = [sys.executable, '-c', f'from {app.__module__} import {app.__name__}; {app.__name__}()']
+        subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE)
+    else:
+        threading.Thread(target=run_app, args=(app, console), daemon=True).start()
+        
+
+def run_app(app: typing.Callable, console: bool = True):
+    global app_running
     show_console() if console else None
     try:
+        app_running = True
         app()
+        app_running = False
         if os.name == 'nt':
             import winsound
             winsound.Beep(500, 200)
     except Exception as e:
+        app_running = False
         print(e)
-    hide(3) if console else None
+    hide(2) if console else None
 
 def hide(seconds: int):
     print("\n")
@@ -32,7 +44,7 @@ def hide(seconds: int):
     hide_console()
 
 def add_hotkey(hotkey: str, app: typing.Callable, console: bool = True):
-    keyboard.add_hotkey(hotkey, lambda: run(app) if console else run(app, console=False))
+    keyboard.add_hotkey(hotkey, lambda: run(app, console))
     hotkeys[hotkey.split("+")[-1]] = str(app.__name__)
 
 def afk_monitor():
@@ -74,8 +86,7 @@ def punch_and_start_afk_monitoring():
     afk = False
     punch()
 
-# add hotkeys
-print(" > adding hotkeys")
+print(" > hotkeys")
 add_hotkey('shift+ctrl+alt+k', show_hotkeys)
 
 from handle_assistant import ffmpeg_assist
@@ -95,7 +106,6 @@ add_hotkey('shift+ctrl+alt+w', show_last_n_lines)
 from handle_youtube import download_with_ui, download_transcript_with_ui
 add_hotkey('shift+ctrl+alt+y', download_with_ui)
 add_hotkey('shift+ctrl+alt+t', download_transcript_with_ui)
-# use a new hotkey to execute `download_transcript`
 
 from handle_strings import godlike_copypaste, submit_to_sheets
 from handle_twitter import tweet
