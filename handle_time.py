@@ -77,7 +77,7 @@ def punch_and_start_afk_monitoring():
     afk = False
     punch()
 
-def countdown(root, time_seconds, label):
+def countdown(root, task_name, time_seconds, label):
     while time_seconds > -1:
         mins, secs = divmod(time_seconds, 60)
         print(mins, secs)
@@ -109,8 +109,8 @@ def timer():
     root.wm_attributes("-transparentcolor", "blue")
     root.attributes("-topmost", True)
 
-    label_time = tk.Label(root, text="", font=("Consolas", 12), bg=color, fg="white")
-    label_time.place(x=root.winfo_screenwidth() / 2, y=root.winfo_screenheight()*0.97, anchor='n')
-    countdown(root, timer_minutes * 60, label_time)
+    label = tk.Label(root, text="", font=("Consolas", 12), bg=color, fg="white")
+    label.place(x=root.winfo_screenwidth() / 2, y=root.winfo_screenheight()*0.97, anchor='n')
+    countdown(root, task_name, timer_minutes * 60, label)
 
     root.mainloop()
