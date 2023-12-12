@@ -20,7 +20,6 @@ def run(app: typing.Callable, console: bool):
     else:
         threading.Thread(target=run_app, args=(app, console), daemon=True).start()
         
-
 def run_app(app: typing.Callable, console: bool = True):
     global app_running
     show_console() if console else None
@@ -47,6 +46,26 @@ def add_hotkey(hotkey: str, app: typing.Callable, console: bool = True):
     keyboard.add_hotkey(hotkey, lambda: run(app, console))
     hotkeys[hotkey.split("+")[-1]] = str(app.__name__)
 
+print(" > hotkeys")
+def show_hotkeys():
+    show_console()
+    print("hotkeys\n")
+    sorted_hotkeys = {k: hotkeys[k] for k in sorted(hotkeys)}
+    for key in sorted_hotkeys:
+        print("    ", key, sorted_hotkeys[key])
+    hide(3)
+add_hotkey('shift+ctrl+alt+k', show_hotkeys)
+
+from handle_assistant import ffmpeg_assist
+add_hotkey('shift+ctrl+alt+f', ffmpeg_assist)
+
+from handle_clipboard import perform_ocr_on_clipboard, fix_windows_file_path_on_clipboard, type_clipboard_contents
+add_hotkey('shift+ctrl+alt+l', perform_ocr_on_clipboard)
+add_hotkey('shift+ctrl+alt+[', fix_windows_file_path_on_clipboard)
+add_hotkey('shift+ctrl+alt+v', type_clipboard_contents, console=False)
+
+
+from handle_time import punch, show_last_n_lines, timer
 def afk_monitor():
     global afk
     ms = interval * 1000
@@ -69,15 +88,6 @@ def afk_monitor():
         else:
             pass
         time.sleep(interval)
-
-def show_hotkeys():
-    show_console()
-    print("hotkeys\n")
-    sorted_hotkeys = {k: hotkeys[k] for k in sorted(hotkeys)}
-    for key in sorted_hotkeys:
-        print("    ", key, sorted_hotkeys[key])
-    hide(3)
-
 def punch_and_start_afk_monitoring():
     global time_tracking, afk
     if not time_tracking:
@@ -85,25 +95,9 @@ def punch_and_start_afk_monitoring():
         time_tracking = True
     afk = False
     punch()
-
-print(" > hotkeys")
-add_hotkey('shift+ctrl+alt+k', show_hotkeys)
-
-from handle_assistant import ffmpeg_assist
-add_hotkey('shift+ctrl+alt+f', ffmpeg_assist)
-
-from handle_clipboard import perform_ocr_on_clipboard, fix_windows_file_path_on_clipboard, type_clipboard_contents
-add_hotkey('shift+ctrl+alt+l', perform_ocr_on_clipboard)
-add_hotkey('shift+ctrl+alt+[', fix_windows_file_path_on_clipboard)
-add_hotkey('shift+ctrl+alt+v', type_clipboard_contents, console=False)
-
-
-from handle_time import punch, show_last_n_lines, timer
 add_hotkey('shift+ctrl+alt+a', punch_and_start_afk_monitoring)
 add_hotkey('shift+ctrl+alt+w', show_last_n_lines)
 add_hotkey('shift+ctrl+alt+q', timer)
-
-
 
 from handle_youtube import download_with_ui, download_transcript_with_ui
 add_hotkey('shift+ctrl+alt+y', download_with_ui)
@@ -114,19 +108,8 @@ from handle_twitter import tweet
 add_hotkey('shift+ctrl+alt+b', godlike_copypaste)
 add_hotkey('shift+ctrl+alt+s', tweet)
 
-# from handle_audio import to_mp3_with_ui, audio_to_audio_with_ui, trim_audio_with_ui
-# keyboard.add_hotkey('shift+ctrl+alt+t', lambda: run())
-# keyboard.add_hotkey('shift+ctrl+alt+u', lambda: run())
-# keyboard.add_hotkey('shift+ctrl+alt+i', lambda: run())
-
 from ableton_demo_creater import wav_to_mp3
 add_hotkey('shift+ctrl+alt+d', wav_to_mp3)
 
-
-
-# display hotkeys
 show_hotkeys()
-
-# run loop
 keyboard.wait()
-

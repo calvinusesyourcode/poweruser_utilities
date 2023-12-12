@@ -8,3 +8,6 @@ secrets.json
 secret.py
 downloads
 __pycache__
+test*
+*.txt
+*.png
