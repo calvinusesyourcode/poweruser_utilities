@@ -98,9 +98,11 @@ add_hotkey('shift+ctrl+alt+[', fix_windows_file_path_on_clipboard)
 add_hotkey('shift+ctrl+alt+v', type_clipboard_contents, console=False)
 
 
-from handle_time import punch, show_last_n_lines
+from handle_time import punch, show_last_n_lines, timer
 add_hotkey('shift+ctrl+alt+a', punch_and_start_afk_monitoring)
 add_hotkey('shift+ctrl+alt+w', show_last_n_lines)
+add_hotkey('shift+ctrl+alt+q', timer)
+
 
 
 from handle_youtube import download_with_ui, download_transcript_with_ui
@@ -119,6 +121,8 @@ add_hotkey('shift+ctrl+alt+s', tweet)
 
 from ableton_demo_creater import wav_to_mp3
 add_hotkey('shift+ctrl+alt+d', wav_to_mp3)
+
+
 
 # display hotkeys
 show_hotkeys()
