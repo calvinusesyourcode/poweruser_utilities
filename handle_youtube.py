@@ -7,6 +7,8 @@ from handle_strings import get_clipboard, show_message
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+downloads_folder = "downloads"
+
 def find_videos(channel,search_terms):
     """Find video URLs from a channel that match a search term.
     
@@ -258,7 +260,7 @@ def download_with_ui():
             ),
         ]
 
-        folder = "downloads"
+        folder = downloads_folder
         if not os.path.exists(folder):
             os.makedirs(folder)
 

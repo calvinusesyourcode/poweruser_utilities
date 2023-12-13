@@ -12,9 +12,9 @@ afk = False
 app_running = False
 
 print(" > functions")
-def run(app: typing.Callable, console: bool):
+def run(app: typing.Callable, console: bool, run_as_subprocess: bool = False):
     global app_running
-    if app_running:
+    if app_running or run_as_subprocess:
         cmd = [sys.executable, '-c', f'from {app.__module__} import {app.__name__}; {app.__name__}()']
         subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE)
     else:
@@ -42,8 +42,8 @@ def hide(seconds: int):
         time.sleep(1)
     hide_console()
 
-def add_hotkey(hotkey: str, app: typing.Callable, console: bool = True):
-    keyboard.add_hotkey(hotkey, lambda: run(app, console))
+def add_hotkey(hotkey: str, app: typing.Callable, console: bool = True, run_as_subprocess: bool = False):
+    keyboard.add_hotkey(hotkey, lambda: run(app, console, run_as_subprocess))
     hotkeys[hotkey.split("+")[-1]] = str(app.__name__)
 
 print(" > hotkeys")
@@ -97,7 +97,7 @@ def punch_and_start_afk_monitoring():
     punch()
 add_hotkey('shift+ctrl+alt+a', punch_and_start_afk_monitoring)
 add_hotkey('shift+ctrl+alt+w', show_last_n_lines)
-add_hotkey('shift+ctrl+alt+q', timer)
+add_hotkey('shift+ctrl+alt+q', timer, run_as_subprocess=True)
 
 from handle_youtube import download_with_ui, download_transcript_with_ui
 add_hotkey('shift+ctrl+alt+y', download_with_ui)
