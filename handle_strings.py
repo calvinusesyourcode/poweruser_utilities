@@ -121,6 +121,7 @@ def notes_loop():
         with open(os.path.join(notes_folder, note["path"]), "r") as f:
             lines = f.read().splitlines()
             for line in lines[::-1]:
+                note["last_opened"] = str(int(fdate)-30)
                 if len(line) == 5:
                     note["last_opened"] = line.replace(":", "")
                     break
@@ -153,6 +154,9 @@ def notes_loop():
         if user_input == "open":
             look(session_path)
             continue
+        if user_input == "del":
+            os.remove(session_path)
+            break
         with open(session_path, "a") as f:
             f.write("\n"+datetime.datetime.now().strftime("%H:%M")+"\n")
             f.write(user_input+"\n")
