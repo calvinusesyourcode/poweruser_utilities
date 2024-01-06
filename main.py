@@ -103,10 +103,11 @@ from handle_youtube import download_with_ui, download_transcript_with_ui
 add_hotkey('shift+ctrl+alt+y', download_with_ui)
 add_hotkey('shift+ctrl+alt+t', download_transcript_with_ui)
 
-from handle_strings import godlike_copypaste, submit_to_sheets
+from handle_strings import godlike_copypaste, submit_to_sheets, notes_loop
 from handle_twitter import tweet
 add_hotkey('shift+ctrl+alt+b', godlike_copypaste)
 add_hotkey('shift+ctrl+alt+s', tweet)
+add_hotkey('shift+ctrl+alt+n', notes_loop, run_as_subprocess=True)
 
 from ableton_demo_creater import wav_to_mp3
 add_hotkey('shift+ctrl+alt+d', wav_to_mp3)
