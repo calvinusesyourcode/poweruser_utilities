@@ -103,28 +103,59 @@ def submit_to_sheets():
 
 
 def notes_loop():
-    print("> notes_loop")
-    import os, datetime
+    print("> notes_loop\n")
+    import os, datetime, subprocess
+
+    def clear(): (os.system("cls") if os.name == "nt" else os.system("clear")); print("\n")
+    def pretty_print(text): clear(); print(f"\n  {text}\n") 
+    def look(path): subprocess.run(f"notepad {path}") if os.name == "nt" else subprocess.run(f"open {path}")
+    
     notes_folder = "notes"
     os.makedirs(notes_folder, exist_ok=True)
-    if os.name == "nt": os.system("cls"); print("\n")
-    session_name = None
     fdate = datetime.datetime.now().strftime("%Y%m%d")
-    notes = [f for f in os.listdir(notes_folder) if abs(int(fdate)-int(f[:8])) <= 14]
-    for i, note in enumerate(notes): print(f"  ({i}) {note[9:].split('.')[0]}")
+
+    # fetch recent notes, sorted
+    notes = [{"path":f} for f in os.listdir(notes_folder) if abs(int(fdate)-int(f[:8])) <= 14]
+    for i, note in enumerate(notes):
+        note["pretty_name"] = note["path"][9:].split('.')[0]
+        with open(os.path.join(notes_folder, note["path"]), "r") as f:
+            lines = f.read().splitlines()
+            for line in lines[::-1]:
+                if len(line) == 5:
+                    note["last_opened"] = line.replace(":", "")
+                    break
+        
+    notes = sorted(notes, key=lambda k: k["last_opened"], reverse=True)
+    
+    clear()
+    session_name = None
+    for i, note in enumerate(notes): print(f"  ({i}) {note['pretty_name']}")
     while session_name is None:
-        session_name = input("\nsession_name: ")
-    session_path = os.path.join(notes_folder, notes[int(session_name)]) if session_name.isdigit() else os.path.join(notes_folder, f"{fdate}-{session_name.replace(' ', '_')}.txt")
+        session_name = input("\n# or new session_name: ")
+
+    if session_name.isdigit():
+        session_path = os.path.join(notes_folder, notes[int(session_name)]["path"])
+        session_name = notes[int(session_name)]["pretty_name"]
+    else:
+        session_path = os.path.join(notes_folder, f"{fdate}-{session_name.replace(' ', '_')}.txt")
+
     if not os.path.exists(session_path):
         with open(session_path, "w") as f:
             f.write(f"{fdate}\n\n")
-    print(f"session_path: {session_path}")
+    
+    pretty_print(f"{session_name}")
+    n = 0
     while True:
         user_input = input("> ")
-        if user_input == "exit":
+        if user_input == "":
+            if n == 0: os.remove(session_path)
             break
+        if user_input == "open":
+            look(session_path)
+            continue
         with open(session_path, "a") as f:
             f.write("\n"+datetime.datetime.now().strftime("%H:%M")+"\n")
             f.write(user_input+"\n")
+        n += 1
         # f.close()
-    print("exiting...")
+    print("> exiting...")
